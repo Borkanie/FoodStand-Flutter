@@ -1,4 +1,5 @@
 import 'package:claro_server/Data/food.dart';
+import 'package:claro_server/Data/food_map.dart';
 
 /// Divides poritoning types into wheigthed and piced meals.
 enum PortionType{
@@ -22,4 +23,11 @@ class Container{
     }
   }
   Container(this.food,this.wheigth,this.type);
+
+  @override operator==(Object other){
+    return other is Container ? other.hashCode == hashCode : false;
+  }
+
+  @override
+  int get hashCode => food.hashCode;
 }
