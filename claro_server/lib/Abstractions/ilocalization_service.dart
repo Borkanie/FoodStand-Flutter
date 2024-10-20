@@ -14,7 +14,7 @@ abstract class ILocalizationService{
   void pauseSystem();
 
   /// Returns the current [FoodMap]
-  FoodMap get getGoodMap;
+  Future<FoodMap> get getGoodMap;
 
   /// Set's a given [Food] item in a [Location] by overriding the current value in the [Container]
   void setFood(Food food, Location location);
@@ -23,8 +23,8 @@ abstract class ILocalizationService{
   void emitEvent(Change event);
 
   /// Method to subscribe to events that signal changes in the [Container]
-  Stream<Change> subscribe();
+  Future<Stream<Change>> subscribe();
 
   /// Returns an [Item] for a [Container] based on it's [Food]
-  Item getItem(Container container);
+  Future<Item> getItem(Container container);
 }
