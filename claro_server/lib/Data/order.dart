@@ -4,6 +4,8 @@ import 'package:claro_server/Data/item.dart';
 
 /// Contains a [List] of [Item] and represents an order for a given customer with all it's items.
 class Order{
+  final int id;
+  Order(this.id);
   List<Item> items = [];
   int price = 0;
   List<Food> get getFoods{
