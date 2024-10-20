@@ -1,7 +1,7 @@
 import 'package:claro_server/Data/food.dart';
 abstract class IFoodService{
   /// Searches for a [Food] with a matching name and return a new one if none is found
-  Future<Food> getFood(String? name);
+  Future<Food> getFood(String name);
   
   /// registers a [Food] object in the database, return [True] if succesfull
   Future<bool> registerFood(Food food);
