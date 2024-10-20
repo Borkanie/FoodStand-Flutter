@@ -1,17 +1,5 @@
 import 'package:claro_server/Data/container.dart';
-import 'package:claro_server/Data/food.dart';
-
-/// This class will deal with the position of a [Container]
-///  in a matrix that represents the trays of [Food].
-class Location{
-  /// The line on which the [Container] can be found.
-  int line;
-
-  /// The column on which the [Container] can be found.
-  int column;
-  
-  Location(this.line, this.column);
-}
+import 'package:claro_server/Data/location.dart';
 
 /// This object holds a colleciton of [Container] in a matrix like format using a [Map]
 /// It set's a fixed [lines] and [columns] on construction to frame the matrix.
@@ -24,18 +12,13 @@ class FoodMap{
   FoodMap get clone{
     Map<Location,Container> containerList = {};
     for(var key in containers.keys){
-      var newContainer = Container(containers[key]!.food, containers[key]!.wheigth, containers[key]!.type);
+      var newContainer = Container(containers[key]!.food, containers[key]!.wheigth, containers[key]!.type, key);
       containerList[key]=newContainer;
     }
     FoodMap result = FoodMap(containerList, lines, columns);
     return result;
   }
  
-  @override 
-  bool operator ==(Object other){
-    return other is FoodMap ? other.hashCode == hashCode : false;
-  }
-
   @override
   int get hashCode{
     int res = 0;
@@ -44,5 +27,11 @@ class FoodMap{
     }
     return res;
   }
+
+  @override 
+  bool operator ==(Object other){
+    return other is FoodMap ? other.hashCode == hashCode : false;
+  }
 }
+
 
