@@ -1,9 +1,13 @@
 import 'package:claro_server/Data/container.dart';
 import 'package:claro_server/Data/location.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'food_map.g.dart';
 
 /// This object holds a colleciton of [Container] in a matrix like format using a [Map]
 /// It set's a fixed [lines] and [columns] on construction to frame the matrix.
 /// The Map will use the [Location] of each container  as the key.
+@JsonSerializable()
 class FoodMap{
   Map<Location,Container> containers;
   final int lines;
@@ -32,6 +36,9 @@ class FoodMap{
   bool operator ==(Object other){
     return other is FoodMap ? other.hashCode == hashCode : false;
   }
+
+  factory FoodMap.fromJson(Map<String, dynamic> json) => _$FoodMapFromJson(json);
+  Map<String, dynamic> toJson() => _$FoodMapToJson(this);
 }
 
 

@@ -1,9 +1,13 @@
 import 'package:claro_server/Data/food.dart';
 import 'package:claro_server/Data/location.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'container.g.dart';
 
 /// This object represents a tray equiped with a sensor.
 /// It must have food in it.
 /// In case of empty  we will use default food.
+@JsonSerializable()
 class Container{
   final Location location;
   Food food;
@@ -26,6 +30,9 @@ class Container{
   @override operator==(Object other){
     return other is Container ? other.hashCode == hashCode : false;
   }
+
+  factory Container.fromJson(Map<String, dynamic> json) => _$ContainerFromJson(json);
+  Map<String, dynamic> toJson() => _$ContainerToJson(this);
 }
 
 /// Divides poritoning types into wheigthed and piced meals.
