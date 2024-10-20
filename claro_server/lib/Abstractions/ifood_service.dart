@@ -14,5 +14,4 @@ abstract class IFoodService{
   
   /// returns all the [Food] isntances in the database.
   List<Food> get food;
-
 }
