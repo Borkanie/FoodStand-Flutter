@@ -3,15 +3,18 @@ abstract class IFoodService{
   /// Searches for a [Food] with a matching name and return a new one if none is found
   Future<Food> getFood(String name);
   
-  /// registers a [Food] object in the database, return [True] if succesfull
-  Future<bool> registerFood(Food food);
+  /// registers a [Food] object in the database
+  Future<void> registerFood(Food food);
 
   /// udpate s a [Food] in the database, uses the [Food.name] as an identifier
-  Future<bool> updateFood(Food food,String? oldName);
+  Future<void> updateFood(Food food,String? oldName);
 
   /// udpate s a [Food] in the database, uses the [Food.name] as an identifier or [name] if none matches
-  Future<bool> removeFood(Food? food,String? name);
+  Future<void> removeFood(Food? food,String? name);
   
+  /// Checks wheather an item has been registered.
+  Future<bool> isRegistered(String name);
+
   /// returns all the [Food] isntances in the database.
   Future<List<Food>> get food;
 }

@@ -5,102 +5,112 @@ import 'package:claro_server/Abstractions/ifood_service.dart';
 import 'package:claro_server/Data/food.dart';
 
 class FoodService extends IFoodService {
-  final List<Food> _food;
-  
-  FoodService(this._food);
+  final Map<String, Food> _foods;
+  final String _dataBaseFilePath;
 
+  // A static variable to hold the single instance of the class
+  static FoodService? _instance;
+
+  // Private named constructor
+  FoodService._internal(this._foods, this._dataBaseFilePath);
+  
+  // Method to get the singleton instance (throws error if not initialized)
+  static FoodService get instance {
+    if (_instance == null) {
+      throw Exception('Singleton is not initialized. Call initialize() first.');
+    }
+    return _instance!;
+  }
 
   @override
-  Future<List<Food>> get food => Future<List<Food>>(() => _food);
+  Future<List<Food>> get food =>
+      Future<List<Food>>(() => _foods.values.toList());
 
   @override
   Future<Food> getFood(String name) {
-    return Future( () => _getFood(name));
+    return Future(() =>  _foods.containsKey(name) ? _foods[name]! : Food("", 0, 0));
   }
 
   @override
-  Future<bool> registerFood(Food food) {
-   return Future(() => _registerFood(food));
+  Future<bool> isRegistered(String name) {
+    return Future(() => _foods.containsKey(name));
   }
 
   @override
-  Future<bool> removeFood(Food? food, String? name) {
-    return Future(() => _removeFood(food,name));
+  Future<void> registerFood(Food food) {
+    return Future(() => _registerFood(food));
+  }
+
+  void _removeFood(Food? food, String? name) {
+    if (name != null && _foods.containsKey(name)) {
+      _foods.remove(name);
+      _saveMap();
+    }
+    if (food != null && _foods.containsKey(food.name)) {
+      _foods.remove(food.name);
+      _saveMap();
+    }
   }
 
   @override
-  Future<bool> updateFood(Food food, String? oldName) {
-    return Future(()=> _updateFood(food,oldName));
+  Future<void> removeFood(Food? food, String? name) {
+    return Future(() => _removeFood(food, name));
   }
 
-  Food _getFood(String name){
-    return _food.firstWhere((food) => food.name == name, orElse: () => Food("",0,0));
+  void _updateFood(Food food, String? oldName) {
+    if (oldName == null) {
+      _foods[food.name] = food;
+    } else {
+      _foods.remove(oldName);
+      _foods[food.name] = food;
+    }
+    _saveMap();
   }
 
-  bool _registerFood(Food food){
-    if(_getFood(food.name).name == ""){
-       _food.add(food);
-       return true;
-    }else{
-      return false;
-    }
+  @override
+  Future<void> updateFood(Food food, String? oldName) {
+    return Future(() => _updateFood(food, oldName));
   }
 
-  bool _removeFood(Food? food, String? name){
-    if(food == null && name == null){
-      return false;
-    }
-    if(food == null){
-      if(_getFood(name!).name == name){
-        _food.remove(_getFood(name));
-       return true;
-      }else{
-        return false;
-      }
-    }else{
-      if(_getFood(food.name).name == ""){
-         _food.add(food);
-       return true;
-      }else{
-        return false;
-      }
-    }
-  }
-
-  bool _updateFood(Food food, String? oldName){
-    if(oldName == null){
-      if(_getFood(food.name).name == ""){
-       return false;
-      }else{
-        _food.remove(_getFood(food.name));
-        _food.add(food);
-        return true;
-      }
-    }else{
-      if(_getFood(oldName).name == ""){
-       return false;
-      }else{
-        _food.remove(_getFood(oldName));
-        _food.add(food);
-        return true;
-      }
-    }
+  void _registerFood(Food food) {
+    _foods[food.name] = food;
   }
 
   // Factory constructor to create an instance with async initialization
-  static Future<FoodService> create(String filePath) async {
-    List<Food> foodList = await _initializeFoodsFromFile(filePath);
-    return FoodService(foodList);
+  static Future<FoodService> intitialize(String filePath) async {
+    Map<String, Food> foodList = await _initializeFoodsFromFile(filePath);
+    _instance = FoodService._internal(foodList, filePath);
+    return  Future(() => instance);
   }
 
   // Asynchronous method to read food objects from a file
-  static Future<List<Food>> _initializeFoodsFromFile(String filePath) async {
+  static Future<Map<String, Food>> _initializeFoodsFromFile(String filePath) async {
+    final Map<String, Food> list = {};
     final file = File(filePath);
     if (await file.exists()) {
-      final contents = await file.readAsString();
-      final List<dynamic> jsonList = json.decode(contents);
-      return jsonList.map((json) => Food.fromJson(json)).toList();
+      final List<dynamic> jsonList = json.decode(await file.readAsString());
+      jsonList
+          .map((json) => Food.fromJson(json))
+          .toList()
+          .forEach((member) => list[member.name] = member);
     }
-    return [];
+    return list;
+  }
+
+  Future<File> _saveMap() async {
+    var file = await _getEmptyFile(_dataBaseFilePath);
+    Map<String, dynamic> jsonMap = _foods.map((key, food) => MapEntry(key, food.toJson()));
+    // Convert the map to a JSON string
+    String jsonString = jsonEncode(jsonMap);
+    return file.writeAsString(jsonString);
+  }
+
+  Future<File> _getEmptyFile(String filePath) async {
+    final file = File(filePath);
+    if (await file.exists()) {
+      await file.delete();
+    }
+    await file.create();
+    return Future(() => file);
   }
 }
