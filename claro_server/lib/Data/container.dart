@@ -18,7 +18,7 @@ class Container{
   /// Returns the avialable food poritons for the given food.
   int get avialableQuantity{
     if(type == PortionType.portion) {
-      return wheigth ~/ food.wheigthPerPortion;
+      return wheigth ~/ food.weigthPerPortion;
     } else {
       return wheigth;
     }

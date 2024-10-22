@@ -1,0 +1,99 @@
+[
+    {
+      "name": "Apple",
+      "weigthPerPortion": 150,
+      "pricePerPortion": 2,
+      "description": "A sweet red fruit, perfect for a snack."
+    },
+    {
+      "name": "Banana",
+      "weigthPerPortion": 120,
+      "pricePerPortion": 1,
+      "description": ""
+    },
+    {
+      "name": "Steak",
+      "weigthPerPortion": 300,
+      "pricePerPortion": 15,
+      "description": "Grilled beef steak, tender and juicy."
+    },
+    {
+      "name": "Salmon",
+      "weigthPerPortion": 200,
+      "pricePerPortion": 12,
+      "description": ""
+    },
+    {
+      "name": "Pizza",
+      "weigthPerPortion": 400,
+      "pricePerPortion": 8,
+      "description": "Cheesy pizza with pepperoni and mushrooms."
+    },
+    {
+      "name": "Chicken Salad",
+      "weigthPerPortion": 250,
+      "pricePerPortion": 5,
+      "description": "Healthy salad with grilled chicken and fresh vegetables."
+    },
+    {
+      "name": "Burger",
+      "weigthPerPortion": 350,
+      "pricePerPortion": 6,
+      "description": ""
+    },
+    {
+      "name": "Spaghetti Bolognese",
+      "weigthPerPortion": 300,
+      "pricePerPortion": 7,
+      "description": "Classic Italian pasta with a rich meat sauce."
+    },
+    {
+      "name": "Tacos",
+      "weigthPerPortion": 180,
+      "pricePerPortion": 3,
+      "description": "Soft tacos filled with beef, cheese, and salsa."
+    },
+    {
+      "name": "Sushi",
+      "weigthPerPortion": 150,
+      "pricePerPortion": 10,
+      "description": "Fresh sushi rolls with salmon and avocado."
+    },
+    {
+      "name": "Chocolate Cake",
+      "weigthPerPortion": 200,
+      "pricePerPortion": 4,
+      "description": ""
+    },
+    {
+      "name": "Fried Rice",
+      "weigthPerPortion": 250,
+      "pricePerPortion": 5,
+      "description": "Stir-fried rice with vegetables and egg."
+    },
+    {
+      "name": "Grilled Cheese Sandwich",
+      "weigthPerPortion": 150,
+      "pricePerPortion": 2,
+      "description": ""
+    },
+    {
+      "name": "Caesar Salad",
+      "weigthPerPortion": 180,
+      "pricePerPortion": 6,
+      "description": "Crisp romaine lettuce, croutons, and Caesar dressing."
+    },
+    {
+      "name": "Pancakes",
+      "weigthPerPortion": 200,
+      "pricePerPortion": 3,
+      "description": "Fluffy pancakes served with syrup."
+    },
+    {
+      "name": "Ice Cream",
+      "weigthPerPortion": 100,
+      "pricePerPortion": 2,
+      "description": ""
+    }
+  ]
+  

@@ -41,7 +41,7 @@ class FoodService extends IFoodService {
     return Future(() => _registerFood(food));
   }
 
-  void _removeFood(Food? food, String? name) {
+  void _removeFood({Food? food, String? name}) {
     if (name != null && _foods.containsKey(name)) {
       _foods.remove(name);
       _saveMap();
@@ -53,11 +53,11 @@ class FoodService extends IFoodService {
   }
 
   @override
-  Future<void> removeFood(Food? food, String? name) {
-    return Future(() => _removeFood(food, name));
+  Future<void> removeFood({Food? food, String? name}) {
+    return Future(() => _removeFood(food: food,name: name));
   }
 
-  void _updateFood(Food food, String? oldName) {
+  void _updateFood({required Food food, String? oldName}) {
     if (oldName == null) {
       _foods[food.name] = food;
     } else {
@@ -68,8 +68,8 @@ class FoodService extends IFoodService {
   }
 
   @override
-  Future<void> updateFood(Food food, String? oldName) {
-    return Future(() => _updateFood(food, oldName));
+  Future<void> updateFood({required Food food, String? oldName}) {
+    return Future(() => _updateFood(food: food,oldName: oldName));
   }
 
   void _registerFood(Food food) {
@@ -77,22 +77,23 @@ class FoodService extends IFoodService {
   }
 
   // Factory constructor to create an instance with async initialization
-  static Future<FoodService> intitialize(String filePath) async {
-    Map<String, Food> foodList = await _initializeFoodsFromFile(filePath);
-    _instance = FoodService._internal(foodList, filePath);
+  static Future<IFoodService> intitialize(File file) async {
+    Map<String, Food> foodList = await _initializeFoodsFromFile(file);
+    _instance = FoodService._internal(foodList, file.path);
     return  Future(() => instance);
   }
 
   // Asynchronous method to read food objects from a file
-  static Future<Map<String, Food>> _initializeFoodsFromFile(String filePath) async {
+  static Future<Map<String, Food>> _initializeFoodsFromFile(File file) async {
     final Map<String, Food> list = {};
-    final file = File(filePath);
     if (await file.exists()) {
       final List<dynamic> jsonList = json.decode(await file.readAsString());
-      jsonList
+      if(jsonList.isNotEmpty){
+        jsonList
           .map((json) => Food.fromJson(json))
           .toList()
           .forEach((member) => list[member.name] = member);
+      } 
     }
     return list;
   }

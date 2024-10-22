@@ -6,27 +6,27 @@ part 'food.g.dart';
 @JsonSerializable()
 class Food{
   static Food getDefault = Food("Empty", 0, 0);
-  int _wheigthPerPortion;
+  int _weigthPerPortion;
   int _pricePerPortion;
   String name;
   String? description;
-  Food(this.name,int wheigthPerPortion,int pricePerPortion) : _wheigthPerPortion = 0, _pricePerPortion = 0
+  Food(this.name,int weigthPerPortion,int pricePerPortion) : _weigthPerPortion = 0, _pricePerPortion = 0
   {
-    wheigthPerPortion > 0 ? _wheigthPerPortion = wheigthPerPortion : _wheigthPerPortion = -wheigthPerPortion;
-    pricePerPortion > 0 ? _pricePerPortion = wheigthPerPortion : _pricePerPortion = -pricePerPortion;
+    weigthPerPortion > 0 ? _weigthPerPortion = weigthPerPortion : _weigthPerPortion = -weigthPerPortion;
+    pricePerPortion > 0 ? _pricePerPortion = weigthPerPortion : _pricePerPortion = -pricePerPortion;
   }
   
   @override
-  int get hashCode => name.hashCode * (wheigthPerPortion + 1) * (pricePerPortion + 1);
+  int get hashCode => name.hashCode * (weigthPerPortion + 1) * (pricePerPortion + 1);
   
   int get pricePerPortion => _pricePerPortion;
   set pricePerPortion(int value){
     value > 0 ? _pricePerPortion = value : _pricePerPortion = -value;
   }
 
-  int get wheigthPerPortion => _wheigthPerPortion;
-  set wheigthPerPortion(int value){
-    value > 0 ? _wheigthPerPortion = value : _wheigthPerPortion = -value;
+  int get weigthPerPortion => _weigthPerPortion;
+  set weigthPerPortion(int value){
+    value > 0 ? _weigthPerPortion = value : _weigthPerPortion = -value;
   }
 
   @override
