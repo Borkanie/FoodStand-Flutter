@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,7 +6,7 @@ import 'package:claro_server/Abstractions/ifood_service.dart';
 import 'package:claro_server/Data/food.dart';
 
 class FoodService extends IFoodService {
-  final Map<String, Food> _foods;
+  final LinkedHashSet<Food> _foods;
   final String _dataBaseFilePath;
 
   // A static variable to hold the single instance of the class
@@ -24,16 +25,16 @@ class FoodService extends IFoodService {
 
   @override
   Future<List<Food>> get food =>
-      Future<List<Food>>(() => _foods.values.toList());
+      Future<List<Food>>(() => _foods.toList());
 
   @override
   Future<Food> getFood(String name) {
-    return Future(() =>  _foods.containsKey(name) ? _foods[name]! : Food("", 0, 0));
+    return Future(() =>  _foods.firstWhere( (x) => x.name == name, orElse: () => Food("", 0, 0)));
   }
 
   @override
   Future<bool> isRegistered(String name) {
-    return Future(() => _foods.containsKey(name));
+    return Future(() => _foods.any((food) => food.name == name));
   }
 
   @override
@@ -42,14 +43,12 @@ class FoodService extends IFoodService {
   }
 
   void _removeFood({Food? food, String? name}) {
-    if (name != null && _foods.containsKey(name)) {
-      _foods.remove(name);
-      _saveMap();
+    // Check if both parameters are null
+    if (food == null && name == null) {
+      throw ArgumentError('At least one argument (food or name) must be provided.');
     }
-    if (food != null && _foods.containsKey(food.name)) {
-      _foods.remove(food.name);
-      _saveMap();
-    }
+    name == null ? _foods.removeWhere((x) => x.name == name) : _foods.removeWhere((x) => x.name == food!.name);
+    _saveMap();
   }
 
   @override
@@ -58,12 +57,8 @@ class FoodService extends IFoodService {
   }
 
   void _updateFood({required Food food, String? oldName}) {
-    if (oldName == null) {
-      _foods[food.name] = food;
-    } else {
-      _foods.remove(oldName);
-      _foods[food.name] = food;
-    }
+    oldName == null ? _foods.removeWhere((x) => x.name == food.name) : _foods.removeWhere((x) => x.name == oldName);
+    _foods.add(food);
     _saveMap();
   }
 
@@ -73,26 +68,27 @@ class FoodService extends IFoodService {
   }
 
   void _registerFood(Food food) {
-    _foods[food.name] = food;
+    _foods.add(food);
+    _saveMap();
   }
 
   // Factory constructor to create an instance with async initialization
   static Future<IFoodService> intitialize(File file) async {
-    Map<String, Food> foodList = await _initializeFoodsFromFile(file);
+    LinkedHashSet<Food> foodList = await _initializeFoodsFromFile(file);
     _instance = FoodService._internal(foodList, file.path);
     return  Future(() => instance);
   }
 
   // Asynchronous method to read food objects from a file
-  static Future<Map<String, Food>> _initializeFoodsFromFile(File file) async {
-    final Map<String, Food> list = {};
+  static Future<LinkedHashSet<Food>> _initializeFoodsFromFile(File file) async {
+    final LinkedHashSet<Food> list = LinkedHashSet.identity();
     if (await file.exists()) {
       final List<dynamic> jsonList = json.decode(await file.readAsString());
       if(jsonList.isNotEmpty){
         jsonList
           .map((json) => Food.fromJson(json))
           .toList()
-          .forEach((member) => list[member.name] = member);
+          .forEach((member) => list.add(member));
       } 
     }
     return list;
@@ -100,7 +96,7 @@ class FoodService extends IFoodService {
 
   Future<File> _saveMap() async {
     var file = await _getEmptyFile(_dataBaseFilePath);
-    Map<String, dynamic> jsonMap = _foods.map((key, food) => MapEntry(key, food.toJson()));
+    List<Food> jsonMap = _foods.toList();
     // Convert the map to a JSON string
     String jsonString = jsonEncode(jsonMap);
     return file.writeAsString(jsonString);
