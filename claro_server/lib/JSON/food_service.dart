@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:claro_server/Abstractions/ifood_service.dart';
 import 'package:claro_server/Data/food.dart';
+import 'package:claro_server/util.dart';
 
 class FoodService extends IFoodService {
   final LinkedHashSet<Food> _foods;
@@ -95,19 +96,10 @@ class FoodService extends IFoodService {
   }
 
   Future<File> _saveMap() async {
-    var file = await _getEmptyFile(_dataBaseFilePath);
+    var file = await Util.getEmptyFile(_dataBaseFilePath);
     List<Food> jsonMap = _foods.toList();
     // Convert the map to a JSON string
     String jsonString = jsonEncode(jsonMap);
     return file.writeAsString(jsonString);
-  }
-
-  Future<File> _getEmptyFile(String filePath) async {
-    final file = File(filePath);
-    if (await file.exists()) {
-      await file.delete();
-    }
-    await file.create();
-    return Future(() => file);
   }
 }
