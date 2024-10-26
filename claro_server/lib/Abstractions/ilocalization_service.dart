@@ -8,23 +8,23 @@ import 'dart:async';
 
 abstract class ILocalizationService{
   /// Ensures the sensors are reading from the trays.
-  void readValues();
+  Future<void> readValues();
 
   /// Pauses the sensors or the system to allow for maintenance.
-  void pauseSystem();
+  Future<void> pauseSystem();
 
   /// Returns the current [FoodMap]
   Future<FoodMap> get getGoodMap;
 
   /// Set's a given [Food] item in a [Location] by overriding the current value in the [Container]
-  void setFood(Food food, Location location);
+  Future<void> setFood(Food food, Location location);
 
   // Method to emit an event
-  void emitEvent(Change event);
+  Future<void> emitEvent(Change event);
 
   /// Method to subscribe to events that signal changes in the [Container]
   Future<Stream<Change>> subscribe();
 
-  /// Returns an [Item] for a [Container] based on it's [Food]
-  Future<Item> getItem(Container container);
+  /// Returns an [Item] for a [Location] based on it's [Food]
+   Future<Item> getItem(Location location);
 }
