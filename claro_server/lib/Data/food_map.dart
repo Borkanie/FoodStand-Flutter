@@ -12,7 +12,7 @@ class FoodMap{
   FoodMap get clone{
     Map<Location,Container> containerList = {};
     for(var key in containers.keys){
-      var newContainer = Container(containers[key]!.food, containers[key]!.wheigth, containers[key]!.type);
+      var newContainer = Container(containers[key]!.food, containers[key]!.quantity, containers[key]!.type);
       containerList[key]=newContainer;
     }
     FoodMap result = FoodMap(containerList, lines, columns);

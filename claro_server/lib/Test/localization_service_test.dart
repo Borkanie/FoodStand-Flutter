@@ -31,7 +31,7 @@ void setFoodMap(String value){
           "pricePerPortion": 50,
           "description": "A fresh red apple"
         },
-        "wheigth": 1,
+        "quantity": 1,
         "type": "g"
       }
     },
@@ -44,7 +44,7 @@ void setFoodMap(String value){
           "pricePerPortion": 30,
           "description": "A ripe yellow banana"
         },
-        "wheigth": 2,
+        "quantity": 2,
         "type": "portion"
       }
     },
@@ -57,7 +57,7 @@ void setFoodMap(String value){
           "pricePerPortion": 20,
           "description": "An organic carrot"
         },
-        "wheigth": 3,
+        "quantity": 3,
         "type": "g"
       }
     },
@@ -70,7 +70,7 @@ void setFoodMap(String value){
           "pricePerPortion": 45,
           "description": "A bunch of broccoli"
         },
-        "wheigth": 4,
+        "quantity": 4,
         "type": "portion"
       }
     }
@@ -115,7 +115,7 @@ void main() {
 
   group('LocalizationService', () {
     test('initializes and reads FoodMap from file', () async {
-      final foodMap = await localizationService.getGoodMap;
+      final foodMap = await localizationService.getFoodMap;
       expect(foodMap, isA<FoodMap>());
       expect(foodMap.containers.isNotEmpty, true);
     });
@@ -161,7 +161,7 @@ void main() {
           "pricePerPortion": 150,
           "description": "Grilled chicken breast"
         },
-        "wheigth": 5,
+        "quantity": 5,
         "type": "g"
       }
     },
@@ -174,7 +174,7 @@ void main() {
           "pricePerPortion": 200,
           "description": "Lean beef steak"
         },
-        "wheigth": 6,
+        "quantity": 6,
         "type": "portion"
       }
     },
@@ -187,7 +187,7 @@ void main() {
           "pricePerPortion": 180,
           "description": "Tender pork chop"
         },
-        "wheigth": 7,
+        "quantity": 7,
         "type": "g"
       }
     },
@@ -200,13 +200,13 @@ void main() {
           "pricePerPortion": 160,
           "description": "Fresh salmon fillet"
         },
-        "wheigth": 8,
+        "quantity": 8,
         "type": "g"
       }
     }],
      "lines": 1,
   "columns": 4
-});
+    });
       
       mockFile.setFoodMap(newFoodMapJson);
       final eventStream = await localizationService.subscribe();
@@ -219,5 +219,87 @@ void main() {
         expect(onData.type, ChangeTypes.changeFood);
       });
     });
-  });
+
+    test('readValues changes quantities to all so all events should trigger', () async {
+      final newFoodMapJson = jsonEncode(
+{
+  "containers": [
+    {
+      "location": { "line": 0, "column": 0 },
+      "container": {
+        "food": { 
+          "name": "apple", 
+          "weigthPerPortion": 100, 
+          "pricePerPortion": 50,
+          "description": "A fresh red apple"
+        },
+        "quantity": 10,
+        "type": "g"
+      }
+    },
+    {
+      "location": { "line": 0, "column": 1 },
+      "container": {
+        "food": { 
+          "name": "banana", 
+          "weigthPerPortion": 120, 
+          "pricePerPortion": 30,
+          "description": "A ripe yellow banana"
+        },
+        "quantity": 22,
+        "type": "portion"
+      }
+    },
+    {
+      "location": { "line": 0, "column": 2 },
+      "container": {
+        "food": { 
+          "name": "carrot", 
+          "weigthPerPortion": 80, 
+          "pricePerPortion": 20,
+          "description": "An organic carrot"
+        },
+        "quantity": 0.2,
+        "type": "g"
+      }
+    },
+    {
+      "location": { "line": 0, "column": 3 },
+      "container": {
+        "food": { 
+          "name": "broccoli", 
+          "weigthPerPortion": 200, 
+          "pricePerPortion": 45,
+          "description": "A bunch of broccoli"
+        },
+        "quantity": 4.3,
+        "type": "portion"
+      }
+    }
+  ],
+  "lines": 1,
+  "columns": 4
+});      
+      mockFile.setFoodMap(newFoodMapJson);
+      var originalMap =await localizationService.getFoodMap;
+      final eventStream = await localizationService.subscribe();
+
+      await localizationService.readValues();
+      var changes = eventStream.take(4);
+      var count = await changes.length;
+      expect(count, 3);
+      
+      changes.listen((onData) async {
+        var location = onData.location;
+        var container = await localizationService.getItem(location);
+        if(container.quantity > originalMap.containers[location]!.avialableQuantity){
+          expect(onData.type, ChangeTypes.weigthIncrease);
+        }else{
+          expect(onData.type, ChangeTypes.weigthIncrease);  
+        }
+      });
+    });
+
+
+  });  
 }

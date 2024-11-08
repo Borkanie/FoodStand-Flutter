@@ -14,7 +14,7 @@ abstract class ILocalizationService{
   Future<void> pauseSystem();
 
   /// Returns the current [FoodMap]
-  Future<FoodMap> get getGoodMap;
+  Future<FoodMap> get getFoodMap;
 
   /// Set's a given [Food] item in a [Location] by overriding the current value in the [Container]
   Future<void> setFood(Food food, Location location);

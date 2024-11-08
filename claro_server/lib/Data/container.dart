@@ -9,16 +9,16 @@ part 'container.g.dart';
 @JsonSerializable()
 class Container{
   Food food;
-  int wheigth;
+  int quantity;
   PortionType type;
-  Container(this.food,this.wheigth,this.type);
+  Container(this.food,this.quantity,this.type);
 
   /// Returns the avialable food poritons for the given food.
   int get avialableQuantity{
     if(type == PortionType.portion) {
-      return wheigth ~/ food.weigthPerPortion;
+      return quantity ~/ food.weigthPerPortion;
     } else {
-      return wheigth;
+      return quantity;
     }
   }
 
@@ -26,7 +26,7 @@ class Container{
   int get hashCode => food.hashCode;
 
   @override operator==(Object other){
-    return other is Container ? other.hashCode == hashCode : false;
+    return other is Container ? (other.food == food && other.quantity == quantity && other.type == type) : false;
   }
 
   factory Container.fromJson(Map<String, dynamic> json) => _$ContainerFromJson(json);

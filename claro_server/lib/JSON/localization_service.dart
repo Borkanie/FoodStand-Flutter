@@ -48,7 +48,7 @@ class LocalizationService extends ILocalizationService{
   }
 
   @override
-  Future<FoodMap> get getGoodMap{
+  Future<FoodMap> get getFoodMap{
     return Future(() => _foodMap);
   }
 
@@ -90,7 +90,7 @@ class LocalizationService extends ILocalizationService{
           if(source.food != target.food){
               event = Change(ChangeTypes.changeFood, location);
           }else{
-            event = Change(source.wheigth < target.wheigth ? ChangeTypes.weigthIncrease : ChangeTypes.weigthDecrease, location);
+            event = Change(source.quantity < target.quantity ? ChangeTypes.weigthIncrease : ChangeTypes.weigthDecrease, location);
           }
           // default case is change in wheigth
           emitEvent(event);
