@@ -43,6 +43,7 @@ class LocalizationService extends ILocalizationService{
 
   @override
   Future<void> emitEvent(Change event) {
+
     return Future( () => _changes.add(event));
   }
 
@@ -75,24 +76,22 @@ class LocalizationService extends ILocalizationService{
     for(int i=0;i<newMap.lines;i++){
       for(int j=0;j<newMap.columns;j++){
         var location = Location(i, j);
-        _checkDiffBetweenTwoContainersAndEmitEvent(_foodMap.containers[location],newMap.containers[location]);
+        _checkDiffBetweenTwoContainersAndEmitEvent(_foodMap.containers[location],newMap.containers[location], location);
       }
     }
   }
 
-  void _checkDiffBetweenTwoContainersAndEmitEvent(Container? source, Container? target){
+  void _checkDiffBetweenTwoContainersAndEmitEvent(Container? source, Container? target, Location location){
         if(source != target){
-          if(source == null){
+          if(source == null || target == null){
             return;
           }
-          if(target == null){
-            return;
+          final event;
+          if(source.food != target.food){
+              event = Change(ChangeTypes.changeFood, location);
+          }else{
+            event = Change(source.wheigth < target.wheigth ? ChangeTypes.weigthIncrease : ChangeTypes.weigthDecrease, location);
           }
-          if(source.food != target.food ){
-
-            return;
-          }
-          var event = Change(source.wheigth < target.wheigth ? ChangeTypes.wheigthIncrease : ChangeTypes.wheigthDecrease, source.location);
           // default case is change in wheigth
           emitEvent(event);
         }
@@ -115,7 +114,7 @@ class LocalizationService extends ILocalizationService{
     return Future(() => _changes.stream);
   }
 
- // Dispose of the controller when done
+  @override
   void dispose() {
     _changes.close();
   }

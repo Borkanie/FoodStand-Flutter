@@ -1,5 +1,4 @@
 import 'package:claro_server/Data/food.dart';
-import 'package:claro_server/Data/location.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'container.g.dart';
@@ -9,11 +8,10 @@ part 'container.g.dart';
 /// In case of empty  we will use default food.
 @JsonSerializable()
 class Container{
-  final Location location;
   Food food;
   int wheigth;
   PortionType type;
-  Container(this.food,this.wheigth,this.type,this.location);
+  Container(this.food,this.wheigth,this.type);
 
   /// Returns the avialable food poritons for the given food.
   int get avialableQuantity{

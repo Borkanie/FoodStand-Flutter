@@ -3,9 +3,10 @@ import 'package:claro_server/Data/container.dart';
 import 'package:claro_server/Data/location.dart';
 
 enum ChangeTypes{
-  wheigthIncrease,
-  wheigthDecrease,
+  weigthIncrease,
+  weigthDecrease,
   error,
+  changeFood,
 }
 
 /// A change read by a sensor for a given [Location]

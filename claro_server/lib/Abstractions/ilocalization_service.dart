@@ -27,4 +27,7 @@ abstract class ILocalizationService{
 
   /// Returns an [Item] for a [Location] based on it's [Food]
    Future<Item> getItem(Location location);
+
+  /// cleans up service
+  void dispose();
 }

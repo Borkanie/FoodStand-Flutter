@@ -22,4 +22,19 @@ class Location{
       'line': line,
       'column': column,
     };
+
+   @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Location && other.line == line && other.column == column;
+  }
+
+  @override
+  String toString() {
+    return "[line:$line; column:$column]";
+  }
+
+  @override
+  int get hashCode => column.hashCode ^ column.hashCode;
 }
