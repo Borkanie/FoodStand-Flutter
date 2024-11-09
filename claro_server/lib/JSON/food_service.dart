@@ -58,6 +58,10 @@ class FoodService extends IFoodService {
   }
 
   void _updateFood({required Food food, String? oldName}) {
+    if(_foods.any((x) => x.name == food.name) &&
+             (oldName == null && _foods.any((x) => x.name == oldName))){
+      throw ArgumentError('Food with name ${oldName ?? food.name} already exists.');
+    }
     oldName == null ? _foods.removeWhere((x) => x.name == food.name) : _foods.removeWhere((x) => x.name == oldName);
     _foods.add(food);
     _saveMap();
@@ -101,5 +105,10 @@ class FoodService extends IFoodService {
     // Convert the map to a JSON string
     String jsonString = jsonEncode(jsonMap);
     return file.writeAsString(jsonString);
+  }
+  
+  @override
+  Future<Set<Food>> getFoods() {
+    return Future(() => _foods);
   }
 }

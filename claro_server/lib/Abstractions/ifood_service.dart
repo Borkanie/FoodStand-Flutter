@@ -3,6 +3,9 @@ abstract class IFoodService{
   /// Searches for a [Food] with a matching name and return a new one if none is found
   Future<Food> getFood(String name);
   
+  /// returns all the [Food] instances in the database.
+  Future<Set<Food>> getFoods();
+
   /// registers a [Food] object in the database
   Future<void> registerFood(Food food);
 

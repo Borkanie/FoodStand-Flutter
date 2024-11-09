@@ -92,7 +92,6 @@ void setFoodMap(String value){
 
 
 }
-class MockStreamController extends Mock implements StreamController<Change> {}
 
 void main() {
   late MockFile mockFile;
