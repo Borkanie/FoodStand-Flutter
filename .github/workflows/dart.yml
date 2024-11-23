@@ -42,5 +42,8 @@ jobs:
       # want to change this to 'flutter test'.
       - name: Run tests
         run: |
-            cd lib/Test
+            cd lib
+            ls -a
+            cd Test
+            ls -a
             dart test
