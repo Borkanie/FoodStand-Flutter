@@ -46,7 +46,7 @@ void setFoodMap(String value){
 ]);
 
   @override 
-  String get path => "null";
+  String get path => "data/food_Service_dbb.json";
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
@@ -63,9 +63,25 @@ void setFoodMap(String value){
   bool existsSync() {
     return true;
   }
+
+  @override
+  void createSync({bool recursive = false, bool exclusive = false}) {
+    
+  }
+
+  @override
+  void deleteSync({bool recursive = false}) {
+    
+  }
+
   @override
   Future<bool> exists() {
     return Future(() => true);
+  }
+
+  @override
+  void writeAsStringSync(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) {
+    foodMapJson = contents;
   }
 
 
@@ -91,7 +107,7 @@ void main() {
       expect(FoodService.instance, equals(foodService));
     });
 
-    test('adds a new food item', () {
+    test('adds a new food item', () async {
       final food = Food('Apple33', 100, 50);
       foodService.registerFood(food);
 
