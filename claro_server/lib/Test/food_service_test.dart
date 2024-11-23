@@ -56,7 +56,6 @@ void setFoodMap(String value){
 
   @override
   String readAsStringSync({Encoding encoding = utf8}) {
-    // TODO: implement readAsStringSync
     return  foodMapJson.toString();
   }
 
