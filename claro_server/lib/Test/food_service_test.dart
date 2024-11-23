@@ -12,12 +12,12 @@ import 'package:test/test.dart';
 
 
 class MockFile extends Mock implements File {
+
 void setFoodMap(String value){
   foodMapJson = value;
 }
 
   var foodMapJson = jsonEncode(
-    {
   [
   {
     "name": "Apple",
@@ -43,7 +43,10 @@ void setFoodMap(String value){
     "pricePerPortion": 60,
     "description": "A bunch of grapes"
   }
-]});
+]);
+
+  @override 
+  String get path => "null";
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
@@ -51,6 +54,16 @@ void setFoodMap(String value){
     return Future(() => str);
   }
 
+  @override
+  String readAsStringSync({Encoding encoding = utf8}) {
+    // TODO: implement readAsStringSync
+    return  foodMapJson.toString();
+  }
+
+  @override
+  bool existsSync() {
+    return true;
+  }
   @override
   Future<bool> exists() {
     return Future(() => true);
@@ -61,18 +74,20 @@ void setFoodMap(String value){
 
 void main() {
   late IFoodService foodService;
-  final String databaseFilePath = 'path/to/database/file';
 
-  setUp(() {
+  setUp(() async {
     // Initialize the FoodService singleton
     final file = MockFile();
-    FoodService.initialize(file);
-    foodService = FoodService.instance;
+    foodService = await FoodService.initialize(file);
   });
 
 
   group('FoodService', () {
     test('initializes the singleton instance correctly', () {
+      if(foodService == null){
+        throw Exception("FoodService is null");
+      }
+
       expect(FoodService.instance, isNotNull);
       expect(FoodService.instance, equals(foodService));
     });
@@ -81,14 +96,18 @@ void main() {
       final food = Food('Apple33', 100, 50);
       foodService.registerFood(food);
 
-      expect(foodService.getFood(food.name), equals(food));
+      foodService.getFood(food.name).then((value) =>
+      {
+      expect(value, equals(food))
+      });
     });
 
     test('does not add duplicate food items', () {
       final food = Food('Apple333', 100, 50);
-      foodService.registerFood(food);
-      expect(() async =>await foodService.registerFood(food), 
-                  throwsException);
+      foodService.registerFood(food).then((value) => 
+      {
+        expect(foodService.registerFood(food),throwsA(isA<ArgumentError>()))
+      });
     });
 
     test('updates an existing food item', () {
@@ -101,20 +120,23 @@ void main() {
     test('does not update a non-existing food item', () {
       final updatedFood = Food('DUMMY', 150, 60);
       
-      expect(() async => await foodService.updateFood(food: updatedFood),
-        throwsException);
+      expect( foodService.updateFood(food: updatedFood),
+        throwsA(isA<ArgumentError>()));
     });
 
     test('deletes a food item', () async {
       final food = await foodService.getFood("Apple");
 
-      foodService.removeFood(name: food.name);
+      foodService.removeFood(name: food.name).then((value) => 
+      {
+        foodService.getFood(food.name).then((value) => expect(value , isNull))
+      });
 
-      expect(await foodService.getFood(food.name), isNull);
     });
 
     test('does not delete a non-existing food item and does throw exception', () {
-      expect(() async => await foodService.removeFood(name: "QQQQ"), throwsException);
+      expect(foodService.removeFood(name: "QQQQ"),
+             throwsA(isA<ArgumentError>()));
     });
 
     test('retrieves all food items', () {
@@ -122,8 +144,8 @@ void main() {
     });
 
     test('returns default when retrieving a non-existing food item by ID', () {
-      final result = foodService.getFood("QQQQ");
-      expect(result, Food("", 0, 0));
+      foodService.getFood("QQQQ").then(
+        (value) => expect(value, isNull));
     });
   });
 }

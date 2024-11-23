@@ -13,7 +13,7 @@ class Food{
   Food(this.name,int weigthPerPortion,int pricePerPortion) : _weigthPerPortion = 0, _pricePerPortion = 0
   {
     weigthPerPortion > 0 ? _weigthPerPortion = weigthPerPortion : _weigthPerPortion = -weigthPerPortion;
-    pricePerPortion > 0 ? _pricePerPortion = weigthPerPortion : _pricePerPortion = -pricePerPortion;
+    pricePerPortion > 0 ? _pricePerPortion = pricePerPortion : _pricePerPortion = -pricePerPortion;
   }
   
   @override

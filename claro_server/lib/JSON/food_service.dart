@@ -30,7 +30,7 @@ class FoodService extends IFoodService {
 
   @override
   Future<Food> getFood(String name) {
-    return Future(() =>  _foods.firstWhere( (x) => x.name == name, orElse: () => Food("", 0, 0)));
+    return Future(() =>  _foods.firstWhere( (x) => x.name == name));
   }
 
   @override
@@ -48,6 +48,9 @@ class FoodService extends IFoodService {
     if (food == null && name == null) {
       throw ArgumentError('At least one argument (food or name) must be provided.');
     }
+    if(!_foods.any((x) => name == null ? x.name == food!.name : x.name == name)){
+      throw ArgumentError('Food with name ${name ?? food!.name} does not exist.');
+    }
     name == null ? _foods.removeWhere((x) => x.name == name) : _foods.removeWhere((x) => x.name == food!.name);
     _saveMap();
   }
@@ -58,8 +61,11 @@ class FoodService extends IFoodService {
   }
 
   void _updateFood({required Food food, String? oldName}) {
-    if(_foods.any((x) => x.name == food.name) &&
-             (oldName == null && _foods.any((x) => x.name == oldName))){
+    if(_foods.any((x) => x.name == food.name)){
+      if(oldName == null && _foods.any((x) => x.name == oldName)){
+        throw ArgumentError('Food with name ${oldName ?? food.name} already exists.');
+      }
+    }else if(!_foods.any((x) => x.name == oldName)){
       throw ArgumentError('Food with name ${oldName ?? food.name} already exists.');
     }
     oldName == null ? _foods.removeWhere((x) => x.name == food.name) : _foods.removeWhere((x) => x.name == oldName);
@@ -73,6 +79,9 @@ class FoodService extends IFoodService {
   }
 
   void _registerFood(Food food) {
+    if(_foods.any((x) => x.name == food.name)){
+      throw ArgumentError('Food with name ${food.name} already exists.');
+    }
     _foods.add(food);
     _saveMap();
   }
@@ -87,8 +96,9 @@ class FoodService extends IFoodService {
   // Asynchronous method to read food objects from a file
   static Future<LinkedHashSet<Food>> _initializeFoodsFromFile(File file) async {
     final LinkedHashSet<Food> list = LinkedHashSet.identity();
-    if (await file.exists()) {
-      final List<dynamic> jsonList = json.decode(await file.readAsString());
+    if (file.existsSync()) {
+      var fileString = file.readAsStringSync();
+      final List<dynamic> jsonList = json.decode(fileString);
       if(jsonList.isNotEmpty){
         jsonList
           .map((json) => Food.fromJson(json))
