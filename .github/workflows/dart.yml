@@ -26,9 +26,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-            ls -a
             dart pub get
-      #      cd claro-server 
+            cd claro_server 
 
       # Uncomment this step to verify the use of 'dart format' on each commit.
       # - name: Verify formatting
