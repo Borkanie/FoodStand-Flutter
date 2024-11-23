@@ -219,8 +219,8 @@ void main() {
       });
     });
 
-    test('readValues changes quantities to all so all events should trigger', () async {
-      final newFoodMapJson = jsonEncode(
+    String _getNewFoodMap(){
+      return  jsonEncode(
 {
   "containers": [
     {
@@ -278,25 +278,21 @@ void main() {
   ],
   "lines": 1,
   "columns": 4
-});      
+});    
+    }
+    test('readValues changes quantities to all so all events should trigger', () async {
+      final newFoodMapJson =  _getNewFoodMap();
       mockFile.setFoodMap(newFoodMapJson);
-      var originalMap =await localizationService.getFoodMap;
-      final eventStream = await localizationService.subscribe();
+      int calls = 0;
+      (await localizationService.subscribe()).listen((event) {
+        calls+=1;
+        print(event.type);
+      });
 
       await localizationService.readValues();
-      var changes = eventStream.take(4);
-      var count = await changes.length;
-      expect(count, 3);
-      
-      changes.listen((onData) async {
-        var location = onData.location;
-        var container = await localizationService.getItem(location);
-        if(container.quantity > originalMap.containers[location]!.avialableQuantity){
-          expect(onData.type, ChangeTypes.weigthIncrease);
-        }else{
-          expect(onData.type, ChangeTypes.weigthIncrease);  
-        }
-      });
+      await Future.delayed(Duration(seconds: 5));
+      expect(calls, 3);
+
     });
 
 

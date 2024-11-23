@@ -65,7 +65,8 @@ void main() {
 
   setUp(() {
     // Initialize the FoodService singleton
-    FoodService.initialize(MockFile());
+    final file = MockFile();
+    FoodService.initialize(file);
     foodService = FoodService.instance;
   });
 

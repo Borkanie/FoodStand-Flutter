@@ -78,7 +78,7 @@ class FoodService extends IFoodService {
   }
 
   // Factory constructor to create an instance with async initialization
-  static Future<IFoodService> intitialize(File file) async {
+  static Future<IFoodService> initialize(File file) async {
     LinkedHashSet<Food> foodList = await _initializeFoodsFromFile(file);
     _instance = FoodService._internal(foodList, file.path);
     return  Future(() => instance);
