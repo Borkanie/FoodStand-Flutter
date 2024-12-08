@@ -43,4 +43,4 @@ jobs:
       - name: Run tests
         run: |
             cd claro_server/lib/Test
-            dart test
+            dart test .

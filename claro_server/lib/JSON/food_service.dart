@@ -110,7 +110,11 @@ class FoodService extends IFoodService {
   }
 
   Future<File> _saveMap() async {
-    var file = await Util.getEmptyFile(_dataBaseFilePath);
+    var file = File(_dataBaseFilePath);
+    if(file.existsSync()){
+      file.deleteSync();
+    }
+    file.createSync();
     List<Food> jsonMap = _foods.toList();
     // Convert the map to a JSON string
     String jsonString = jsonEncode(jsonMap);
