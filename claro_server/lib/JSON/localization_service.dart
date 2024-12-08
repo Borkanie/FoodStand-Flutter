@@ -86,7 +86,7 @@ class LocalizationService extends ILocalizationService{
           if(source == null || target == null){
             return;
           }
-          final event;
+          final Change event;
           if(source.food != target.food){
               event = Change(ChangeTypes.changeFood, location);
           }else{

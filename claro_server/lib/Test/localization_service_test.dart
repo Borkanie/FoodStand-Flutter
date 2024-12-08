@@ -219,7 +219,7 @@ void main() {
       });
     });
 
-    String _getNewFoodMap(){
+    String getNewFoodMap(){
       return  jsonEncode(
 {
   "containers": [
@@ -281,7 +281,7 @@ void main() {
 });    
     }
     test('readValues changes quantities to all so all events should trigger', () async {
-      final newFoodMapJson =  _getNewFoodMap();
+      final newFoodMapJson =  getNewFoodMap();
       mockFile.setFoodMap(newFoodMapJson);
       int calls = 0;
       (await localizationService.subscribe()).listen((event) {

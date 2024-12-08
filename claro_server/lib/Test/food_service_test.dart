@@ -99,10 +99,6 @@ void main() {
 
   group('FoodService', () {
     test('initializes the singleton instance correctly', () {
-      if(foodService == null){
-        throw Exception("FoodService is null");
-      }
-
       expect(FoodService.instance, isNotNull);
       expect(FoodService.instance, equals(foodService));
     });
