@@ -7,13 +7,13 @@ import 'package:claro_server/Data/food.dart';
 
 class FoodService extends IFoodService {
   final LinkedHashSet<Food> _foods;
-  final String _dataBaseFilePath;
+  final File _dataBaseFile;
 
   // A static variable to hold the single instance of the class
   static FoodService? _instance;
 
   // Private named constructor
-  FoodService._internal(this._foods, this._dataBaseFilePath);
+  FoodService._internal(this._foods, this._dataBaseFile);
   
   // Method to get the singleton instance (throws error if not initialized)
   static FoodService get instance {
@@ -29,7 +29,7 @@ class FoodService extends IFoodService {
 
   @override
   Future<Food> getFood(String name) {
-    return Future(() =>  _foods.firstWhere( (x) => x.name == name));
+    return Future(() =>  _foods.firstWhere( (x) => x.name == name, orElse: () => throw ArgumentError('Food with name $name does not exist.')));
   }
 
   @override
@@ -50,7 +50,7 @@ class FoodService extends IFoodService {
     if(!_foods.any((x) => name == null ? x.name == food!.name : x.name == name)){
       throw ArgumentError('Food with name ${name ?? food!.name} does not exist.');
     }
-    name == null ? _foods.removeWhere((x) => x.name == name) : _foods.removeWhere((x) => x.name == food!.name);
+    name != null ? _foods.removeWhere((x) => x.name == name) : _foods.removeWhere((x) => x.name == food!.name);
     _saveMap();
   }
 
@@ -88,7 +88,7 @@ class FoodService extends IFoodService {
   // Factory constructor to create an instance with async initialization
   static Future<IFoodService> initialize(File file) async {
     LinkedHashSet<Food> foodList = await _initializeFoodsFromFile(file);
-    _instance = FoodService._internal(foodList, file.path);
+    _instance = FoodService._internal(foodList, file);
     return  Future(() => instance);
   }
 
@@ -109,15 +109,14 @@ class FoodService extends IFoodService {
   }
 
   Future<File> _saveMap() async {
-    var file = File(_dataBaseFilePath);
-    if(file.existsSync()){
-      file.deleteSync();
+    if(_dataBaseFile.existsSync()){
+      _dataBaseFile.deleteSync();
     }
-    file.createSync();
+    _dataBaseFile.createSync();
     List<Food> jsonMap = _foods.toList();
     // Convert the map to a JSON string
     String jsonString = jsonEncode(jsonMap);
-    return file.writeAsString(jsonString);
+    return _dataBaseFile.writeAsString(jsonString);
   }
   
   @override

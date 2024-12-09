@@ -46,7 +46,7 @@ void setFoodMap(String value){
 ]);
 
   @override 
-  String get path => "data/food_Service_dbb.json";
+  String get path => "${Directory.current.path}\\data\\food_Service_dbb.json";
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
@@ -84,7 +84,11 @@ void setFoodMap(String value){
     foodMapJson = contents;
   }
 
-
+  @override
+  Future<File> writeAsString(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) {
+    foodMapJson = contents;
+    return Future(() => this);
+  }
 }
 
 void main() {
@@ -135,15 +139,19 @@ void main() {
         throwsA(isA<ArgumentError>()));
     });
 
-    test('deletes a food item', () async {
-      final food = await foodService.getFood("Apple");
+test('deletes a food item', () async {
+  // Arrange: Get the food item and ensure it exists.
+  final food = await foodService.getFood("Apple");
 
-      foodService.removeFood(name: food.name).then((value) => 
-      {
-        foodService.getFood(food.name).then((value) => expect(value , isNull))
-      });
+  // Act: Remove the food item.
+  await foodService.removeFood(name: food.name);
 
-    });
+  // Assert: Verify the food item no longer exists, suppressing log pollution.
+  await expectLater(
+    () async => await foodService.getFood(food.name),
+    throwsA(isA<ArgumentError>()),
+  );
+});
 
     test('does not delete a non-existing food item and does throw exception', () {
       expect(foodService.removeFood(name: "QQQQ"),
