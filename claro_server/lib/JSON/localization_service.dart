@@ -28,17 +28,40 @@ class LocalizationService extends ILocalizationService{
   static Future<FoodMap> _initializeFoodsFromFile(File file) async {
     final FoodMap foodMap;
     if (await file.exists()) {
-      foodMap = FoodMap.fromJson(json.decode(await file.readAsString()));
+      foodMap = FoodMap.fromJson(json.decode(file.readAsStringSync()));
       return foodMap; 
     }
     throw Exception("Could not read Contianers");  
   }
 
   static Future<ILocalizationService> intitialize(File file) async {
+    if(_instance != null){
+      return Future(() => instance);
+    }
     final changes =  StreamController<Change>.broadcast();
     var foodMap = await _initializeFoodsFromFile(file);
     _instance = LocalizationService._internal(changes, foodMap, file);
     return  Future(() => instance);
+  }
+
+  // Asynchronous method to read food objects from a file
+  static FoodMap _initializeFoodsFromFileSync(File file) {
+    final FoodMap foodMap;
+    if (file.existsSync()) {
+      foodMap = FoodMap.fromJson(json.decode(file.readAsStringSync()));
+      return foodMap; 
+    }
+    throw Exception("Could not read Contianers");  
+  }
+
+  static ILocalizationService intitializeSync(File file) {
+    if(_instance != null){
+      return instance;
+    }
+    final changes =  StreamController<Change>.broadcast();
+    var foodMap = _initializeFoodsFromFileSync(file);
+    _instance = LocalizationService._internal(changes, foodMap, file);
+    return  instance;
   }
 
   @override

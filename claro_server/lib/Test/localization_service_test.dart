@@ -86,11 +86,19 @@ void setFoodMap(String value){
   }
 
   @override
+  String readAsStringSync({Encoding encoding = utf8}) {
+    return foodMapJson.toString();
+  }
+
+  @override
   Future<bool> exists() {
     return Future(() => true);
   }
 
-
+  @override
+  bool existsSync() {
+    return true;
+  }
 }
 
 void main() {

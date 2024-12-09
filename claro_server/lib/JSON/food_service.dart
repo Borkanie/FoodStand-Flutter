@@ -87,10 +87,40 @@ class FoodService extends IFoodService {
 
   // Factory constructor to create an instance with async initialization
   static Future<IFoodService> initialize(File file) async {
+    if(_instance != null){
+      return Future(() => instance);
+    }
     LinkedHashSet<Food> foodList = await _initializeFoodsFromFile(file);
     _instance = FoodService._internal(foodList, file);
     return  Future(() => instance);
   }
+
+  // Factory constructor to create an instance with async initialization
+  static IFoodService initializeSync(File file) {
+    if(_instance != null){
+      return instance;
+    }
+    LinkedHashSet<Food> foodList =_initializeFoodsFromFileSync(file);
+    _instance = FoodService._internal(foodList, file);
+    return  instance;
+  }
+
+  // Asynchronous method to read food objects from a file
+  static LinkedHashSet<Food> _initializeFoodsFromFileSync(File file) {
+    final LinkedHashSet<Food> list = LinkedHashSet.identity();
+    if (file.existsSync()) {
+      var fileString = file.readAsStringSync();
+      final List<dynamic> jsonList = json.decode(fileString);
+      if(jsonList.isNotEmpty){
+        jsonList
+          .map((json) => Food.fromJson(json))
+          .toList()
+          .forEach((member) => list.add(member));
+      } 
+    }
+    return list;
+  }
+
 
   // Asynchronous method to read food objects from a file
   static Future<LinkedHashSet<Food>> _initializeFoodsFromFile(File file) async {

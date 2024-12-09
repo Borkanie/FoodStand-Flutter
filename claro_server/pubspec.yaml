@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   json_annotation: ^4.9.0
+  get_it: ^8.0.2
 
 
 dev_dependencies:

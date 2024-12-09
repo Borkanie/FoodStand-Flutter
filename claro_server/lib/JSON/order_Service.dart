@@ -26,7 +26,36 @@ class OrderService extends IOrderService{
   }
 
   // Factory constructor to create an instance with async initialization
+  static IOrderService intitializeSync(File openOrdersCache,File closedOrderDBB) {
+    if(_instance != null){
+      return instance;
+    }
+    final LinkedHashSet<Order> closedOrders = _initializeFoodsFromFileSync(closedOrderDBB);
+    final LinkedHashSet<Order> openOrders = _initializeFoodsFromFileSync(openOrdersCache);
+    _instance = OrderService._internal(openOrders, closedOrders, openOrdersCache.path, closedOrderDBB.path);
+    return  instance;
+  }
+
+  // Asynchronous method to read food objects from a file
+  static LinkedHashSet<Order> _initializeFoodsFromFileSync(File file) {
+    final LinkedHashSet<Order> list = LinkedHashSet.identity();
+    if (file.existsSync()) {
+      final List<dynamic> jsonList = json.decode(file.readAsStringSync());
+      if(jsonList.isNotEmpty){
+        jsonList
+          .map((json) => Order.fromJson(json))
+          .toList()
+          .forEach((member) => list.add(member));
+      } 
+    }
+    return list;
+  }
+
+  // Factory constructor to create an instance with async initialization
   static Future<IOrderService> intitialize(File openOrdersCache,File closedOrderDBB) async {
+    if(_instance != null){
+      return Future(() => instance);
+    }
     final LinkedHashSet<Order> closedOrders = await _initializeFoodsFromFile(closedOrderDBB);
     final LinkedHashSet<Order> openOrders = await _initializeFoodsFromFile(openOrdersCache);
     _instance = OrderService._internal(openOrders, closedOrders, openOrdersCache.path, closedOrderDBB.path);
@@ -37,7 +66,7 @@ class OrderService extends IOrderService{
   static Future<LinkedHashSet<Order>> _initializeFoodsFromFile(File file) async {
     final LinkedHashSet<Order> list = LinkedHashSet.identity();
     if (await file.exists()) {
-      final List<dynamic> jsonList = json.decode(await file.readAsString());
+      final List<dynamic> jsonList = json.decode(file.readAsStringSync());
       if(jsonList.isNotEmpty){
         jsonList
           .map((json) => Order.fromJson(json))
@@ -45,7 +74,7 @@ class OrderService extends IOrderService{
           .forEach((member) => list.add(member));
       } 
     }
-    return list;
+    return Future(() => list);
   }
 
   @override
